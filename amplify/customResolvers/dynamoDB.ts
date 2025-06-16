@@ -1,4 +1,9 @@
-import { a } from "@aws-amplify/backend";
+import { a } from '@aws-amplify/backend';
+import { addFunction } from '../functions/dynamoDB/add/resource';
+import { getFunction } from '../functions/dynamoDB/get/resource';
+import { updateFunction } from '../functions/dynamoDB/update/resource';
+import { deleteFunction } from '../functions/dynamoDB/delete/resource';
+import { listFunction } from '../functions/dynamoDB/list/resource';
 
 export const GetItem = a
   .query()
@@ -7,23 +12,13 @@ export const GetItem = a
   })
   .returns(a.json())
   .authorization((allow) => [allow.publicApiKey()])
-  .handler(
-    a.handler.custom({
-      dataSource: "ArticleTableDataSource",
-      entry: "./getItem.ts",
-    })
-  );
+  .handler(a.handler.function(getFunction));
 
 export const ListItems = a
   .query()
   .returns(a.json())
   .authorization((allow) => [allow.publicApiKey()])
-  .handler(
-    a.handler.custom({
-      dataSource: "ArticleTableDataSource",
-      entry: "./listItems.ts",
-    })
-  );
+  .handler(a.handler.function(listFunction));
 
 export const AddItem = a
   .mutation()
@@ -32,12 +27,7 @@ export const AddItem = a
   })
   .returns(a.json())
   .authorization((allow) => [allow.publicApiKey()])
-  .handler(
-    a.handler.custom({
-      dataSource: "ArticleTableDataSource",
-      entry: "./addItem.ts",
-    })
-  );
+  .handler(a.handler.function(addFunction));
 
 export const UpdateItem = a
   .mutation()
@@ -46,12 +36,7 @@ export const UpdateItem = a
   })
   .returns(a.json())
   .authorization((allow) => [allow.publicApiKey()])
-  .handler(
-    a.handler.custom({
-      dataSource: "ArticleTableDataSource",
-      entry: "./updateItem.ts",
-    })
-  );
+  .handler(a.handler.function(updateFunction));
 
 export const DeleteItem = a
   .mutation()
@@ -60,9 +45,4 @@ export const DeleteItem = a
   })
   .returns(a.json())
   .authorization((allow) => [allow.publicApiKey()])
-  .handler(
-    a.handler.custom({
-      dataSource: "ArticleTableDataSource",
-      entry: "./deleteItem.ts",
-    })
-  );
+  .handler(a.handler.function(deleteFunction));

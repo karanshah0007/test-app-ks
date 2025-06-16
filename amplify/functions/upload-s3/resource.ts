@@ -7,6 +7,6 @@ export const uploadS3Function = defineFunction({
     BRAND_ID: "eocw",
     CLIENT_ID: "dx0n",
     IS_PUBLIC: "false",
-    PARENT_FOLDER_ID: "oyyv"
+    PARENT_FOLDER_ID: "50tq"
   }
 });

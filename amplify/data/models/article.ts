@@ -1,14 +1,27 @@
-import { a } from "@aws-amplify/backend";
+import {
+  a,
+} from '@aws-amplify/backend';
 
-export const Article = a.customType({
-  id: a.id().required(),
-  title: a.string().required(),
-  content: a.string().required(),
-  authorId: a.string().required(),
-});
-
-export const ListArticlesResult = a.customType({
-  items: a.ref("Article").array(),
-  nextToken: a.string() || null,
-  scannedCount: a.integer(),
-});
+export const Article = a
+  .customType({
+        id: a
+    .string()
+        .required()
+    ,
+        title: a
+    .string()
+        .required()
+    ,
+        content: a
+    .string()
+        .required()
+    ,
+        createdAt: a
+    .datetime()
+    ,
+        authorId: a
+    .string()
+        .required()
+    ,
+    
+  });

@@ -4,9 +4,17 @@ import { LambdaClient, InvokeCommand, LogType } from "@aws-sdk/client-lambda";
 const lambda = new LambdaClient({});
 
 export const handler: Handler = async (event, context) => {
-  const stateMachineArn = event.arguments.stateMachineArn;
-  const type = event.arguments.type;
-  const payload = event.arguments.payload;
+  const stateMachineArn = process.env.STATE_MACHINE_ARN;
+  const payloadString = process.env.PAYLOAD;
+  const type = process.env.TYPE;
+  let payload;
+  try {
+    payload = payloadString ? JSON.parse(payloadString) : null;
+  } catch {
+    return {
+      error: "Invalid JSON in PAYLOAD environment variable",
+    };
+  }
 
   if (!stateMachineArn) {
     return {

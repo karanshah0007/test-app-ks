@@ -9,34 +9,24 @@ import LambdaResponseViewer from "@/app/components/LambdaResponseViewer";
 
 const devFlowOptions = [
   {
-    label: "Todos Flow - EXPERSS",
+    label: "Todos Flow",
     value:
       "arn:aws:states:us-east-1:992382535498:stateMachine:dev_d3nh2xvu5kckmx_todos_flow_cb67",
-    type: "EXPRESS",
-  },
-  {
-    label: "Todos Flow - STANDARD",
-    value:
-      "arn:aws:states:us-east-1:992382535498:stateMachine:dev_d3nh2xvu5kckmx_standard_todo_flow_g0nu",
-    type: "STANDARD",
   },
   {
     label: "User Sync Flow",
     value:
       "arn:aws:states:us-east-1:992382535498:express:dev_d3nh2xvu5kckmx_user_sync_flow_ab12",
-    type: "STANDARD",
   },
   {
     label: "Email Notifier Flow",
     value:
       "arn:aws:states:us-east-1:992382535498:express:dev_d3nh2xvu5kckmx_email_notifier_flow_cd34",
-    type: "STANDARD",
   },
   {
     label: "Data Cleanup Flow",
     value:
       "arn:aws:states:us-east-1:992382535498:express:dev_d3nh2xvu5kckmx_data_cleanup_flow_ef56",
-    type: "STANDARD",
   },
 ];
 
@@ -60,13 +50,10 @@ interface ExecuteFlowResponse {
 Amplify.configure({
   API: {
     GraphQL: {
-      endpoint:
-        process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT ??
-        "https://x7xgwafhwjeqbbk4qqt7jzkst4.appsync-api.us-east-1.amazonaws.com/graphql",
+      endpoint: process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT ?? "https://x7xgwafhwjeqbbk4qqt7jzkst4.appsync-api.us-east-1.amazonaws.com/graphql",
       region: "us-east-1",
       defaultAuthMode: "apiKey",
-      apiKey:
-        process.env.NEXT_PUBLIC_API_KEY ?? "da2-ovt6quse7nebbablwauxj3fc6y",
+      apiKey: process.env.NEXT_PUBLIC_API_KEY ?? "da2-ovt6quse7nebbablwauxj3fc6y",
     },
   },
 });
@@ -75,7 +62,6 @@ const client = generateClient<Schema>();
 
 export default function Flows() {
   const [arn, setArn] = useState("");
-  const [flowType, setFlowType] = useState<"STANDARD" | "EXPRESS" | "">("");
   const [payload, setPayload] = useState("");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ arn?: string; payload?: string }>({});
@@ -108,8 +94,8 @@ export default function Flows() {
     try {
       const result = (await client.graphql({
         query: `
-          mutation ExecuteFlow($stateMachineArn: String!, $type: String!, $payload: AWSJSON!) {
-            ExecuteFlow(stateMachineArn: $stateMachineArn, type: $type, payload: $payload) {
+          mutation ExecuteFlow($stateMachineArn: String!, $payload: AWSJSON!) {
+            ExecuteFlow(stateMachineArn: $stateMachineArn, payload: $payload) {
               executedVersion
               statusCode
               logOutput
@@ -127,7 +113,6 @@ export default function Flows() {
         `,
         variables: {
           stateMachineArn: arn,
-          type: flowType,
           payload: payload,
         },
       })) as GraphQLResult<ExecuteFlowResponse>;
@@ -188,14 +173,7 @@ export default function Flows() {
               <select
                 id="arn"
                 value={arn}
-                onChange={(e) => {
-                  const selectedValue = e.target.value;
-                  const selected = devFlowOptions.find(
-                    (flow) => flow.value === selectedValue
-                  );
-                  setArn(selectedValue);
-                  setFlowType((selected?.type as "STANDARD" | "EXPRESS") || "");
-                }}
+                onChange={(e) => setArn(e.target.value)}
                 className={`w-full border rounded-md p-3 text-sm shadow-sm focus:ring-2 focus:outline-none ${
                   errors.arn
                     ? "border-red-500 focus:ring-red-500"
